@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-demo-app
+  namespace: nfs-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nfs-demo-app
+  template:
+    metadata:
+      labels:
+        app: nfs-demo-app
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command: ["sh", "-c", "echo Hello from NFS > /mnt/hello.txt && cat /mnt/hello.txt && sleep 3600"]
+          volumeMounts:
+            - name: nfs-vol
+              mountPath: /mnt
+      volumes:
+        - name: nfs-vol
+          persistentVolumeClaim:
+            claimName: nfs-demo-pvc

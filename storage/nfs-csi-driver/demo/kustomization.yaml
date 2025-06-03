@@ -1,0 +1,4 @@
+resources:
+  - nfs-demo-namespace.yaml
+  - nfs-demo-pvc.yaml
+  - nfs-demo-app.yaml

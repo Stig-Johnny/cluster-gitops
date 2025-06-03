@@ -7,6 +7,10 @@ This directory contains manifests and configuration for deploying the NFS CSI dr
 - `kustomization.yaml`: Deploys the NFS CSI driver controller and node components.
 - `storageclass.yaml`: Defines a StorageClass using the NFS CSI driver, configured for your NFS server at 100.95.36.122:/volume1/docker.
 - `pvc.yaml`: Example PersistentVolumeClaim using the NFS StorageClass.
+- `nfs-demo-namespace.yaml`: Example namespace for demoing NFS storage.
+- `nfs-demo-pvc.yaml`: Example PersistentVolumeClaim in the demo namespace using the NFS StorageClass.
+- `nfs-demo-app.yaml`: Example Deployment mounting the NFS PVC in the demo namespace.
+- `demo/` — Contains a kustomization and all manifests for the NFS demo namespace, PVC, and app. Use this for testing and demonstration purposes.
 
 ## Prerequisites
 
@@ -89,6 +93,23 @@ spec:
       persistentVolumeClaim:
         claimName: nfs-pvc
 ```
+
+## Example: Demo Namespace, PVC, and App
+
+To try out NFS storage, apply the demo stack with:
+
+```sh
+kubectl apply -k demo/
+```
+
+Or, add the ArgoCD Application manifest (`nfs-demo-app-argocd.yaml`) to ArgoCD to manage the demo via GitOps.
+
+This will create:
+- A namespace `nfs-demo`
+- A PVC `nfs-demo-pvc` using the `nfs-csi` StorageClass
+- A demo app (busybox) mounting the NFS volume at `/mnt` and demonstrating read/write
+
+You can `kubectl exec` into the pod to test read/write access to the NFS share.
 
 ## Notes
 

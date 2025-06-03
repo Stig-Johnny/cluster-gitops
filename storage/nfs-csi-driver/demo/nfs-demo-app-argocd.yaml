@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nfs-demo-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Stig-Johnny/cluster-gitops.git'
+    targetRevision: HEAD
+    path: storage/nfs-csi-driver/demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nfs-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
