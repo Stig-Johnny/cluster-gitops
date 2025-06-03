@@ -1,0 +1,2 @@
+resources:
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.0.4+5328bd5/manifests/install.yaml
