@@ -24,8 +24,7 @@ spec:
             share: /volume1/docker
           reclaimPolicy: Retain
           mountOptions: []
-        # Optionally, you can set defaultStorageClass: true if you want this to be the default
-        # defaultStorageClass: true
+          defaultClass: true
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
