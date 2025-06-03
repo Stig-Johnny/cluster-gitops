@@ -1,3 +1,2 @@
 resources:
-  - ../storage/nfs-csi-driver/kustomization.yaml
   - dashboard/kustomization.yaml

@@ -1,3 +1,4 @@
+# App of Apps for cluster-default-tooling
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -9,10 +10,15 @@ spec:
     repoURL: 'https://github.com/Stig-Johnny/cluster-gitops.git'
     targetRevision: HEAD
     path: cluster-default-tooling
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+# All child Applications should be defined as separate YAML files in this directory.
+# Remove explicit child Application definitions from this file.
+# ArgoCD will recursively discover and manage all Application manifests in this directory.

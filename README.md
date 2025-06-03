@@ -74,6 +74,30 @@ ArgoCD is managed using GitOps in this repository:
 - The initial ArgoCD install (bootstrapping) can be done manually, but all future management should be through GitOps for safety and traceability.
 - If the version in `argocd/kustomization.yaml` matches your running version, enabling GitOps management is safe and will not disrupt your cluster.
 
+## App of Apps Pattern for Cluster Default Tooling
+
+Cluster-wide tools are managed using the ArgoCD App of Apps pattern. Each tool (e.g., NFS CSI driver, Kubernetes Dashboard) is defined as a separate ArgoCD Application manifest in `cluster-default-tooling/`.
+
+- The parent Application (`cluster-default-tooling-argocd.yaml`) uses `directory.recurse: true` to automatically discover and manage all child Application manifests in the same directory.
+- To add a new tool, simply add a new `*-argocd.yaml` Application manifest in `cluster-default-tooling/`.
+- This structure is scalable, maintainable, and avoids cross-directory references.
+
+### Example Directory Structure
+
+```
+cluster-default-tooling/
+  cluster-default-tooling-argocd.yaml   # Parent App of Apps
+  nfs-csi-driver-argocd.yaml            # Child Application
+  dashboard-argocd.yaml                 # Child Application
+  ...
+```
+
+### How to Add a New Tool
+1. Create a manifest for the tool (e.g., `my-tool-argocd.yaml`) in `cluster-default-tooling/`.
+2. ArgoCD will automatically discover and manage it via the parent Application.
+
+See each tool's subdirectory for specific configuration and usage details.
+
 ## Adding More Tools
 
 - Add new directories for each cluster-wide tool (e.g., ingress, monitoring, logging).
