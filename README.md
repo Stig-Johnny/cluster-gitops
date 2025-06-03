@@ -5,6 +5,7 @@ This repository manages cluster-wide tools and operators for your Kubernetes clu
 ## Structure
 
 - `storage/nfs-csi-driver/` — NFS CSI driver manifests, StorageClass, and example PVC for NFS-based persistent storage.
+- `argocd/` — ArgoCD manifests and configuration, managed via GitOps. This allows you to upgrade or configure ArgoCD by editing files in this repository and letting ArgoCD sync itself. Safe to use even if ArgoCD is already installed, as long as the version matches.
 - (Add more directories as you add more cluster-wide tools, e.g., ingress controllers, monitoring, etc.)
 
 ## GitOps Workflow
@@ -14,11 +15,13 @@ This repository is intended to be managed by a GitOps tool such as **ArgoCD**. A
 ## ArgoCD Setup
 
 1. **Install ArgoCD:**
-   You can install ArgoCD using the official manifests:
+   You can install ArgoCD using GitOps by adding the manifests to this repository (see `argocd/kustomization.yaml`).
+   If you need to bootstrap ArgoCD manually, you can use:
    ```sh
    kubectl create namespace argocd
-   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.0.4+5328bd5/manifests/install.yaml
    ```
+   After bootstrapping, manage all future ArgoCD upgrades and configuration through GitOps by updating the manifests in `argocd/` and letting ArgoCD sync itself.
 
 2. **Access ArgoCD UI:**
    Expose the ArgoCD API server (for example, using port-forward):
@@ -55,6 +58,21 @@ This repository is intended to be managed by a GitOps tool such as **ArgoCD**. A
          prune: true
          selfHeal: true
    ```
+
+## How ArgoCD is Managed (Self-Management)
+
+ArgoCD is managed using GitOps in this repository:
+- The `argocd/` directory contains a `kustomization.yaml` that references the ArgoCD install manifest for your chosen version.
+- The `argocd/argocd-app.yaml` file is an ArgoCD Application resource that points to the `argocd/` directory, making ArgoCD manage itself ("app of apps").
+- To enable this, apply the Application manifest:
+  ```sh
+  kubectl apply -f argocd/argocd-app.yaml
+  ```
+- After this, any changes to ArgoCD (version upgrades, config changes) should be made in the `argocd/` directory and committed to the repository. ArgoCD will automatically sync and apply these changes.
+
+**Note:**
+- The initial ArgoCD install (bootstrapping) can be done manually, but all future management should be through GitOps for safety and traceability.
+- If the version in `argocd/kustomization.yaml` matches your running version, enabling GitOps management is safe and will not disrupt your cluster.
 
 ## Adding More Tools
 

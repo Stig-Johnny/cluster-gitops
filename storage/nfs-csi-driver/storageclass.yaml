@@ -5,6 +5,6 @@ metadata:
 provisioner: nfs.csi.k8s.io
 parameters:
   server: 100.95.36.122
-  share: /exported/path
+  share: /volume1/docker
 reclaimPolicy: Retain
 volumeBindingMode: Immediate

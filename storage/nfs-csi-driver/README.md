@@ -5,36 +5,96 @@ This directory contains manifests and configuration for deploying the NFS CSI dr
 ## Contents
 
 - `kustomization.yaml`: Deploys the NFS CSI driver controller and node components.
-- `storageclass.yaml`: Defines a StorageClass using the NFS CSI driver.
+- `storageclass.yaml`: Defines a StorageClass using the NFS CSI driver, configured for your NFS server at 100.95.36.122:/volume1/docker.
 - `pvc.yaml`: Example PersistentVolumeClaim using the NFS StorageClass.
 
 ## Prerequisites
 
-- An accessible NFS server.
+- An accessible NFS server at 100.95.36.122 exporting `/volume1/docker`.
 - Kubernetes cluster v1.17+.
+- [ArgoCD](https://argo-cd.readthedocs.io/) installed and managing this repository.
 
-## Setup
+## How it works with ArgoCD
 
-1. **Edit `storageclass.yaml`:**  
-   Replace `<NFS_SERVER_IP>` and `/exported/path` with your NFS server's IP address and exported path.
+ArgoCD will automatically apply the manifests in this directory to your cluster, ensuring the NFS CSI driver and storage configuration are always up to date and in sync with this repository.
 
-2. **Deploy the NFS CSI driver:**
+### Steps
+
+1. **Ensure ArgoCD is running and this repository is registered as an Application.**
+2. **ArgoCD will sync the manifests:**
+   - Installs the NFS CSI driver components.
+   - Creates the `nfs-csi` StorageClass pointing to your NFS server.
+   - Optionally, creates the example PVC (`nfs-pvc`).
+3. **Use the PVC in your workloads:**
+   Reference `nfs-pvc` in your pod or deployment specs, or create your own PVCs using the `nfs-csi` StorageClass.
+
+## How to add this storage stack to ArgoCD
+
+To manage the NFS CSI driver and storage configuration with ArgoCD, add an ArgoCD Application manifest that points to this directory. Example:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nfs-csi-driver
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Stig-Johnny/cluster-gitops.git'
+    targetRevision: HEAD
+    path: storage/nfs-csi-driver
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+1. Save this manifest as `nfs-csi-driver-app.yaml` in your repo or apply it directly to your cluster:
    ```sh
-   kubectl apply -k storage/nfs-csi-driver/
+   kubectl apply -f nfs-csi-driver-app.yaml
    ```
+2. ArgoCD will now keep the NFS CSI driver and storage configuration in sync with this repository.
 
-3. **Create a PersistentVolumeClaim:**
-   ```sh
-   kubectl apply -f storage/nfs-csi-driver/pvc.yaml
-   ```
+## How ArgoCD is Managed
 
-4. **Use the PVC in your workloads:**  
-   Reference `nfs-pvc` in your pod or deployment specs.
+ArgoCD is managed using GitOps in this repository. The `argocd/` directory contains a `kustomization.yaml` referencing the official ArgoCD install manifest, and an Application manifest (`argocd-app.yaml`) that makes ArgoCD manage itself. To enable this, apply the Application manifest:
+
+```sh
+kubectl apply -f argocd/argocd-app.yaml
+```
+
+After this, any changes to ArgoCD (such as version upgrades) should be made in the `argocd/` directory and committed to the repository. ArgoCD will automatically sync and apply these changes.
+
+## Example: Using the PVC in a Pod
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-test-pod
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: nfs-vol
+          mountPath: /mnt
+  volumes:
+    - name: nfs-vol
+      persistentVolumeClaim:
+        claimName: nfs-pvc
+```
 
 ## Notes
 
 - The NFS CSI driver enables dynamic provisioning of NFS-backed persistent volumes.
 - The provided StorageClass uses `Retain` reclaim policy by default.
 - For production, secure your NFS server and restrict access as needed.
+- All changes should be made via pull requests and managed by ArgoCD for full GitOps compliance.
 
 For more details, see the [official NFS CSI driver documentation](https://github.com/kubernetes-csi/csi-driver-nfs).
