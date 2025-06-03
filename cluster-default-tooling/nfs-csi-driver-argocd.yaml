@@ -7,12 +7,28 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/Stig-Johnny/cluster-gitops.git'
-    targetRevision: HEAD
-    path: storage/nfs-csi-driver
+    repoURL: https://kubernetes-sigs.github.io/csi-driver-nfs
+    chart: csi-driver-nfs
+    targetRevision: 4.6.0 # Use the latest stable version or your desired version
+    helm:
+      values: |
+        controller:
+          runOnControlPlane: true
+        node:
+          runOnControlPlane: true
+        storageClass:
+          create: true
+          name: nfs-csi
+          parameters:
+            server: 100.95.36.122
+            share: /volume1/docker
+          reclaimPolicy: Retain
+          mountOptions: []
+        # Optionally, you can set defaultStorageClass: true if you want this to be the default
+        # defaultStorageClass: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: kube-system
   syncPolicy:
     automated:
       prune: true

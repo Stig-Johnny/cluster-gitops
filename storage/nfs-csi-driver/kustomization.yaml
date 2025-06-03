@@ -1,3 +1,0 @@
-resources:
-  - https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/kubernetes/overlays/stable/csi-nfs-controller.yaml
-  - https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/kubernetes/overlays/stable/csi-nfs-node.yaml

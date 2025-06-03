@@ -20,8 +20,9 @@ This approach is scalable, secure, and easy to maintain.
 ## How to add a new tool
 1. Create a directory for the tool (if needed).
 2. Add a kustomization and manifests for the tool.
-3. Create an ArgoCD Application manifest for the tool (e.g., `my-tool-argocd.yaml`).
-4. Add a new child Application to `cluster-default-tooling-argocd.yaml` referencing the new manifest.
+3. Create an ArgoCD Application manifest for the tool (e.g., `my-tool-argocd.yaml`) in this directory.
+   - **You do NOT need to edit or reference the parent App of Apps manifest.**
+   - ArgoCD will automatically discover and manage all `*-argocd.yaml` Application manifests in this directory.
 
 ## Why App of Apps?
 - **Scalability:** Each tool is managed independently.
@@ -29,7 +30,10 @@ This approach is scalable, secure, and easy to maintain.
 - **Maintainability:** Easy to add, remove, or update tools without affecting others.
 
 ## Usage
-- Register `cluster-default-tooling-argocd.yaml` as an ArgoCD Application (or as a child of a higher-level App of Apps).
-- ArgoCD will automatically create and manage all defined child Applications.
+- To apply the App of Apps for the first time, run:
+  ```sh
+  kubectl apply -f cluster-default-tooling-argocd.yaml
+  ```
+- ArgoCD will automatically discover and manage all `*-argocd.yaml` Application manifests in this directory.
 
 See the root `README.md` for more details on the overall GitOps workflow.
