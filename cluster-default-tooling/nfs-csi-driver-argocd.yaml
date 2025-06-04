@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/kubernetes-csi/csi-driver-nfs.git
     targetRevision: v4.6.0
-    path: charts
+    path: deploy/helm/csi-driver-nfs
     helm:
       values: |
         controller:
