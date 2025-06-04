@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: 'https://github.com/Stig-Johnny/cluster-gitops.git'
     targetRevision: HEAD
-    path: cluster-default-tooling/dashboard
+    path: apps/dashboard
   destination:
     server: https://kubernetes.default.svc
     namespace: kubernetes-dashboard
