@@ -4,7 +4,7 @@ This directory manages cluster-wide tools using the ArgoCD App of Apps pattern. 
 
 ## Structure
 - `cluster-default-tooling-argocd.yaml`: The App of Apps manifest. Defines an ArgoCD Application for each tool.
-- `nfs-csi-driver-argocd.yaml`: ArgoCD Application manifest for the NFS CSI driver.
+- `nfs-subdir-external-provisioner-argocd.yaml`: ArgoCD Application manifest for the NFS subdir external provisioner Helm chart.
 - `dashboard-argocd.yaml`: ArgoCD Application manifest for the Kubernetes Dashboard.
 - `dashboard/`: Contains kustomization for the Kubernetes Dashboard.
 
@@ -12,7 +12,7 @@ This directory manages cluster-wide tools using the ArgoCD App of Apps pattern. 
 
 This directory uses the ArgoCD App of Apps pattern:
 - The parent Application (`cluster-default-tooling-argocd.yaml`) uses `directory.recurse: true` to discover all child Application manifests in this directory.
-- Each tool (e.g., NFS CSI driver, Kubernetes Dashboard) is managed as a separate ArgoCD Application manifest (`*-argocd.yaml`).
+- Each tool (e.g., NFS subdir external provisioner, Kubernetes Dashboard) is managed as a separate ArgoCD Application manifest (`*-argocd.yaml`).
 - To add a new tool, simply add a new Application manifest in this directory.
 
 This approach is scalable, secure, and easy to maintain.

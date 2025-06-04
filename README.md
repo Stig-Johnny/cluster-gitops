@@ -4,7 +4,7 @@ This repository manages cluster-wide tools and operators for your Kubernetes clu
 
 ## Structure
 
-- `storage/nfs-csi-driver/` — NFS CSI driver manifests, StorageClass, and example PVC for NFS-based persistent storage.
+- `storage/nfs-subdir-external-provisioner/` — nfs-subdir-external-provisioner manifests, StorageClass, and example PVC for NFS-based persistent storage.
 - `argocd/` — ArgoCD manifests and configuration, managed via GitOps. This allows you to upgrade or configure ArgoCD by editing files in this repository and letting ArgoCD sync itself. Safe to use even if ArgoCD is already installed, as long as the version matches.
 - (Add more directories as you add more cluster-wide tools, e.g., ingress controllers, monitoring, etc.)
 
