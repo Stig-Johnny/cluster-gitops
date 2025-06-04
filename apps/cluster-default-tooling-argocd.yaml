@@ -1,15 +1,15 @@
-# App of Apps for cluster-default-tooling
+# App of Apps for cluster-wide tools
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cluster-default-tooling
+  name: apps
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: 'https://github.com/Stig-Johnny/cluster-gitops.git'
     targetRevision: HEAD
-    path: cluster-default-tooling
+    path: apps
     directory:
       recurse: true
   destination:
@@ -20,5 +20,4 @@ spec:
       prune: true
       selfHeal: true
 # All child Applications should be defined as separate YAML files in this directory.
-# Remove explicit child Application definitions from this file.
 # ArgoCD will recursively discover and manage all Application manifests in this directory.
