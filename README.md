@@ -6,6 +6,7 @@ This repository manages cluster-wide tools and operators for your Kubernetes clu
 
 - `storage/nfs-subdir-external-provisioner/` — nfs-subdir-external-provisioner manifests, StorageClass, and example PVC for NFS-based persistent storage.
 - `argocd/` — ArgoCD manifests and configuration, managed via GitOps. This allows you to upgrade or configure ArgoCD by editing files in this repository and letting ArgoCD sync itself. Safe to use even if ArgoCD is already installed, as long as the version matches.
+- `apps-argocd.yaml`: App of Apps ArgoCD Application manifest at the repo root. This manifest manages all ArgoCD Application manifests in the `apps/` directory using the App of Apps pattern.
 - `apps/` — Contains all ArgoCD Application manifests for cluster-wide tools (NFS, dashboard, etc.) and a README describing the App of Apps pattern and usage.
 - (Add more directories as you add more cluster-wide tools, e.g., ingress controllers, monitoring, etc.)
 
@@ -98,6 +99,16 @@ apps/
 2. ArgoCD will automatically discover and manage it via the parent Application.
 
 See each tool's subdirectory for specific configuration and usage details.
+
+## How to use the App of Apps manifest
+
+To register all cluster-wide ArgoCD Applications at once, apply the App of Apps manifest at the repo root:
+
+```sh
+kubectl apply -f apps-argocd.yaml
+```
+
+ArgoCD will automatically discover and manage all Application manifests in the `apps/` directory.
 
 ## Adding More Tools
 
