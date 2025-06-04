@@ -6,6 +6,7 @@ This repository manages cluster-wide tools and operators for your Kubernetes clu
 
 - `storage/nfs-subdir-external-provisioner/` — nfs-subdir-external-provisioner manifests, StorageClass, and example PVC for NFS-based persistent storage.
 - `argocd/` — ArgoCD manifests and configuration, managed via GitOps. This allows you to upgrade or configure ArgoCD by editing files in this repository and letting ArgoCD sync itself. Safe to use even if ArgoCD is already installed, as long as the version matches.
+- `apps/` — Contains all ArgoCD Application manifests for cluster-wide tools (NFS, dashboard, etc.) and a README describing the App of Apps pattern and usage.
 - (Add more directories as you add more cluster-wide tools, e.g., ingress controllers, monitoring, etc.)
 
 ## GitOps Workflow
@@ -76,16 +77,16 @@ ArgoCD is managed using GitOps in this repository:
 
 ## App of Apps Pattern for Cluster Default Tooling
 
-Cluster-wide tools are managed using the ArgoCD App of Apps pattern. Each tool (e.g., NFS CSI driver, Kubernetes Dashboard) is defined as a separate ArgoCD Application manifest in `cluster-default-tooling/`.
+Cluster-wide tools are managed using the ArgoCD App of Apps pattern. Each tool (e.g., NFS CSI driver, Kubernetes Dashboard) is defined as a separate ArgoCD Application manifest in `apps/`.
 
 - The parent Application (`cluster-default-tooling-argocd.yaml`) uses `directory.recurse: true` to automatically discover and manage all child Application manifests in the same directory.
-- To add a new tool, simply add a new `*-argocd.yaml` Application manifest in `cluster-default-tooling/`.
+- To add a new tool, simply add a new `*-argocd.yaml` Application manifest in `apps/`.
 - This structure is scalable, maintainable, and avoids cross-directory references.
 
 ### Example Directory Structure
 
 ```
-cluster-default-tooling/
+apps/
   cluster-default-tooling-argocd.yaml   # Parent App of Apps
   nfs-csi-driver-argocd.yaml            # Child Application
   dashboard-argocd.yaml                 # Child Application
@@ -93,7 +94,7 @@ cluster-default-tooling/
 ```
 
 ### How to Add a New Tool
-1. Create a manifest for the tool (e.g., `my-tool-argocd.yaml`) in `cluster-default-tooling/`.
+1. Create a manifest for the tool (e.g., `my-tool-argocd.yaml`) in `apps/`.
 2. ArgoCD will automatically discover and manage it via the parent Application.
 
 See each tool's subdirectory for specific configuration and usage details.
