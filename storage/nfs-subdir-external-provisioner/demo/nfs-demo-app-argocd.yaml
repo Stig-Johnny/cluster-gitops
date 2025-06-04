@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/Stig-Johnny/cluster-gitops.git'
     targetRevision: HEAD
-    path: storage/nfs-csi-driver/demo
+    path: storage/nfs-subdir-external-provisioner/demo
   destination:
     server: https://kubernetes.default.svc
     namespace: nfs-demo

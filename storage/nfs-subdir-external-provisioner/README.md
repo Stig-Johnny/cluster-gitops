@@ -7,6 +7,7 @@ This directory contains only demo and example manifests for testing NFS dynamic 
 - `demo/` — Contains a kustomization and all manifests for the NFS demo namespace, PVC, and app. Use this for testing and demonstration purposes.
 - `kustomization.yaml`: (Optional) For aggregating demo/test resources.
 - `pvc.yaml`: Example PersistentVolumeClaim using the NFS StorageClass (for testing only; not required for production).
+- `nfs-demo-app-argocd.yaml`: ArgoCD Application manifest for the NFS demo app. This now uses the correct path: `storage/nfs-subdir-external-provisioner/demo`.
 
 ## Prerequisites
 
