@@ -1,0 +1,42 @@
+# Runner scale set for Stig-Johnny repos (standard Linux jobs)
+# Workflows use: runs-on: arc-linux
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-linux-stig-johnny
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/actions/actions-runner-controller-charts
+    chart: gha-runner-scale-set
+    targetRevision: 0.13.1
+    helm:
+      valuesObject:
+        githubConfigUrl: "https://github.com/Stig-Johnny"
+        githubConfigSecret: github-pat
+        runnerScaleSetName: "arc-linux"
+        minRunners: 1
+        maxRunners: 5
+        template:
+          spec:
+            containers:
+              - name: runner
+                image: ghcr.io/actions/actions-runner:latest
+                command: ["/home/runner/run.sh"]
+                resources:
+                  requests:
+                    cpu: "500m"
+                    memory: "1Gi"
+                  limits:
+                    cpu: "2"
+                    memory: "4Gi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

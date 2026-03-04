@@ -1,0 +1,42 @@
+# Runner scale set for cuti-e/ios-sdk repo (Linux CI jobs)
+# Workflows use: runs-on: arc-linux
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-linux-cutie-ios-sdk
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/actions/actions-runner-controller-charts
+    chart: gha-runner-scale-set
+    targetRevision: 0.13.1
+    helm:
+      valuesObject:
+        githubConfigUrl: "https://github.com/cuti-e/ios-sdk"
+        githubConfigSecret: github-pat
+        runnerScaleSetName: "arc-linux"
+        minRunners: 0
+        maxRunners: 2
+        template:
+          spec:
+            containers:
+              - name: runner
+                image: ghcr.io/actions/actions-runner:latest
+                command: ["/home/runner/run.sh"]
+                resources:
+                  requests:
+                    cpu: "250m"
+                    memory: "512Mi"
+                  limits:
+                    cpu: "1"
+                    memory: "2Gi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
