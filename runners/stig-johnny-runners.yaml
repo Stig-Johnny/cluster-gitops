@@ -1,6 +1,6 @@
 # ApplicationSet: one ARC runner scale set per Stig-Johnny repo
-# Each repo gets its own scale set named "arc-linux" (repo-scoped)
-# Workflows use: runs-on: arc-linux
+# Each repo gets its own scale set with unique name (repo-scoped)
+# Workflows use: runs-on: arc-linux-{repo} (e.g., arc-linux-nutri-e)
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -98,7 +98,7 @@ spec:
           valuesObject:
             githubConfigUrl: "https://github.com/Stig-Johnny/{{repo}}"
             githubConfigSecret: github-pat
-            runnerScaleSetName: "arc-linux"
+            runnerScaleSetName: "arc-linux-{{repo}}"
             controllerServiceAccount:
               name: arc-controller-gha-rs-controller
               namespace: arc-systems
