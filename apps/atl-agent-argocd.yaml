@@ -1,0 +1,22 @@
+# ArgoCD Application for ATL-E (Agile Team Lead agent)
+# Deterministic PR/CI/issue coordinator - polls GitHub, notifies via Discord
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: atl-agent
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Stig-Johnny/atl-agent.git
+    targetRevision: HEAD
+    path: deploy/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: atl-agent
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
