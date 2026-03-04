@@ -1,45 +1,128 @@
-# Runner scale set for Stig-Johnny repos (standard Linux jobs)
+# ApplicationSet: one ARC runner scale set per Stig-Johnny repo
+# Each repo gets its own scale set named "arc-linux" (repo-scoped)
 # Workflows use: runs-on: arc-linux
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: arc-linux-stig-johnny
   namespace: argocd
 spec:
-  project: default
-  source:
-    repoURL: ghcr.io/actions/actions-runner-controller-charts
-    chart: gha-runner-scale-set
-    targetRevision: 0.13.1
-    helm:
-      valuesObject:
-        githubConfigUrl: "https://github.com/Stig-Johnny"
-        githubConfigSecret: github-pat
-        runnerScaleSetName: "arc-linux"
-        controllerServiceAccount:
-          name: arc-controller-gha-rs-controller
-          namespace: arc-systems
-        minRunners: 1
-        maxRunners: 5
-        template:
-          spec:
-            containers:
-              - name: runner
-                image: ghcr.io/actions/actions-runner:latest
-                command: ["/home/runner/run.sh"]
-                resources:
-                  requests:
-                    cpu: "500m"
-                    memory: "1Gi"
-                  limits:
-                    cpu: "2"
-                    memory: "4Gi"
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: arc-runners
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - ServerSideApply=true
+  generators:
+    - list:
+        elements:
+          - repo: totp-mcp
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: pushbullet-sms-mcp
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: telegram-notifications-mcp
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: slack-notifications-mcp
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: claude-memory-mcp
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: appstoreconnect-mcp
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: heart-e
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: drink-e
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: count-e
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: fast-e
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: star-rewards
+            cpu_req: "500m"
+            mem_req: "1Gi"
+            cpu_lim: "2"
+            mem_lim: "4Gi"
+          - repo: dashecorp
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: claude-3
+            cpu_req: "250m"
+            mem_req: "512Mi"
+            cpu_lim: "1"
+            mem_lim: "2Gi"
+          - repo: nutri-e
+            cpu_req: "500m"
+            mem_req: "1Gi"
+            cpu_lim: "2"
+            mem_lim: "4Gi"
+          - repo: cutie
+            cpu_req: "500m"
+            mem_req: "1Gi"
+            cpu_lim: "2"
+            mem_lim: "4Gi"
+  template:
+    metadata:
+      name: "arc-linux-{{repo}}"
+    spec:
+      project: default
+      source:
+        repoURL: ghcr.io/actions/actions-runner-controller-charts
+        chart: gha-runner-scale-set
+        targetRevision: 0.13.1
+        helm:
+          valuesObject:
+            githubConfigUrl: "https://github.com/Stig-Johnny/{{repo}}"
+            githubConfigSecret: github-pat
+            runnerScaleSetName: "arc-linux"
+            controllerServiceAccount:
+              name: arc-controller-gha-rs-controller
+              namespace: arc-systems
+            minRunners: 0
+            maxRunners: 3
+            template:
+              spec:
+                containers:
+                  - name: runner
+                    image: ghcr.io/actions/actions-runner:latest
+                    command: ["/home/runner/run.sh"]
+                    resources:
+                      requests:
+                        cpu: "{{cpu_req}}"
+                        memory: "{{mem_req}}"
+                      limits:
+                        cpu: "{{cpu_lim}}"
+                        memory: "{{mem_lim}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: arc-runners
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
