@@ -1,5 +1,5 @@
 # Runner scale set for cuti-e/ios-sdk repo (Linux CI jobs)
-# Workflows use: runs-on: arc-linux-cutie
+# Workflows use: runs-on: arc-linux-ios-sdk
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -15,7 +15,7 @@ spec:
       valuesObject:
         githubConfigUrl: "https://github.com/cuti-e/ios-sdk"
         githubConfigSecret: github-pat
-        runnerScaleSetName: "arc-linux-cutie"
+        runnerScaleSetName: "arc-linux-ios-sdk"
         controllerServiceAccount:
           name: arc-controller-gha-rs-controller
           namespace: arc-systems
