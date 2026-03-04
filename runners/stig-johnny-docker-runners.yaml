@@ -1,10 +1,10 @@
-# Runner scale set for Stig-Johnny repos (Docker-in-Docker jobs)
+# Runner scale set for nutri-e Docker-in-Docker jobs
 # Workflows use: runs-on: arc-linux-docker
-# Currently only nutri-e/android-ui-tests.yml needs Docker
+# Only nutri-e/android-ui-tests.yml needs Docker
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: arc-linux-docker-stig-johnny
+  name: arc-linux-docker-nutri-e
   namespace: argocd
 spec:
   project: default
@@ -14,7 +14,7 @@ spec:
     targetRevision: 0.13.1
     helm:
       valuesObject:
-        githubConfigUrl: "https://github.com/Stig-Johnny"
+        githubConfigUrl: "https://github.com/Stig-Johnny/nutri-e"
         githubConfigSecret: github-pat
         runnerScaleSetName: "arc-linux-docker"
         controllerServiceAccount:
